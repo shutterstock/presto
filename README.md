@@ -26,4 +26,36 @@ Presto relies on curl to make all requests. Many customization options are avail
 
 All request results are stored in a standardized Response object that includes meta data, header and request response data blocks. A meta data `is_success` entry is always present to indicate if the network request was successful or not. In the event of failure, there will be error information in the meta section.
 
-See the wiki pages for more documentation.
+###Queueing Example
+```php
+Presto\Presto::initQueue();
+
+// callback function to process response
+$rest_response = function($r) {
+	if ( $r->is_success ){
+		echo $r->http_code.' - '.$r->url.' '.round($r->total_time,2)."s\n";
+	} else {
+		echo '0 - '.$r->url.' '.$r->error."\n";
+	}
+};
+
+// URLs to hit, include one that will fail and another that will return a 404
+$urls = array(
+'http://www.google.com',
+'http://www.yahoo.com',
+'http://www.hfjkhfwekjhfkj.info',
+'http://www.bigstockphoto.com/qwerty'
+);
+
+// Create an array to hold Presto request objects
+$requests = array();
+
+foreach($urls as $url) {
+	$requests[$url] = new Presto\Presto();
+	$requests[$url]->queue_enabled = true;
+	$requests[$url]->get($url, null, $rest_response);
+}
+
+// Process all queued requests
+Presto\Presto::processQueue();
+```
