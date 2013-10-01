@@ -1,0 +1,20 @@
+{
+    "name": "shutterstock/presto",
+    "type": "library",
+    "description": "PHP REST Orchestration",
+    "keywords": ["PHP","REST","client","library","module","api"],
+    "homepage": "https://github.com/shutterstock/presto",
+    "authors": [
+        {
+            "name": "Brent Baisley",
+            "email": "bbaisley@shutterstock.com",
+            "homepage": "http://api.shutterstock.com/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "classmap": ["./"]
+    }
+}
