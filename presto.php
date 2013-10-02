@@ -683,7 +683,7 @@ class Response {
 		if ( array_key_exists($meta_key, $this->header) ) {
 			return $this->header[$meta_key];
 		}
-		trigger_error('PRESTO RESPONSE: reference to invalid meta key - '.$meta_key);
+		trigger_error('PRESTO RESPONSE: reference to invalid meta key - "'.$meta_key.'" ');
 		return null;
 	}
 
