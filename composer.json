@@ -1,14 +1,15 @@
 {
     "name": "shutterstock/presto",
     "type": "library",
-    "description": "PHP REST Orchestration",
-    "keywords": ["PHP","REST","client","library","module","api"],
+    "description": "PHP REST Orchestration for interacting with RESTful services",
+    "keywords": ["PHP","REST","client","library","module","api","services","SOA"],
     "homepage": "https://github.com/shutterstock/presto",
     "authors": [
         {
             "name": "Brent Baisley",
             "email": "bbaisley@shutterstock.com",
-            "homepage": "http://api.shutterstock.com/"
+            "homepage": "http://api.shutterstock.com/",
+            "role":"Developer"
         }
     ],
     "require": {
