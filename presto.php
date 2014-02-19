@@ -6,52 +6,24 @@ namespace Presto;
 * Generic RESTful client for interacting with RESTful services.
 * Automatic retries in the event of connection failures,
 * configurable number of retries and delays between retries.
-* 
+*
 * Configuration is performed externally so it is abstracted out.
 * The service client is configured through loadConfig function.
 * Configuration is stored in a static variable, so it
 * is a "global" configuration across all instances.
 *
-* A Response class instance is always returned. This contains 
+* A Response class instance is always returned. This contains
 * the full curl response plus the data payload returned by the
 * service request.
-* 
+*
 * Response meta data:
-* 	url, content_type, http_code, filetime, redirect_count, 
+* 	url, content_type, http_code, filetime, redirect_count,
 * 	total_time, namelookup_time, connect_time, pretransfer_time, starttransfer_time, redirect_time,
-* 	header_size, request_size, size_upload, size_download,  
-* 	download_content_length, upload_content_length, 
+* 	header_size, request_size, size_upload, size_download,
+* 	download_content_length, upload_content_length,
 * 	speed_download, speed_upload,
 * 	certinfo, ssl_verify_result
-* 
-* 
-* Example implementation of a Service:
 *
-* // Should be loaded and configure already by framework
-* // Line is present to indicate dependency
-* require_once('services.class.php');
-*
-* class ExampleService {
-* 	public $serviceClient	= null;
-*	public $service_name	= 'example';
-*	public $service_url		= null;
-* 
-* 	public function __construct() {
-* 		$this->serviceClient	= new ServicesClient();
-*		$this->service_url		= $this->serviceClient->getServiceConfig($this->service_name)->url;
-* 	}
-* 
-* 	public function getExample($url) {
-* 		$response	= $this->serviceClient->get($url, array());
-* 		if ( $response->is_success && $response->http_code==200 ) {
-* 			$data	= json_decode($response->data);
-* 			return $data;
-* 		} else {
-* 			return 0;
-* 		}
-* 	}
-* 
-* }
 *
 */
 
