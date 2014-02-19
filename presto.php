@@ -88,7 +88,7 @@ class Presto {
 	 *
 	 * @var integer
 	 */
-	public static $slow_response_default = 1;
+	public static $slow_response_default = 0;
 	public $slow_response		= null;
 
 	/**
@@ -332,14 +332,14 @@ class Presto {
 		$cinfo				= curl_getinfo($ch);
 		if ( $cresult===false ) {
 			// Request failed
-			$cinfo			= curl_getinfo($ch);
-			$cinfo			= array(
+			$addInfo = array(
 				'is_success'=> false,
-				'url'		=> $cinfo['url'],		// this variable doesn't exist in this function -Brent
 				'errorno'	=> curl_errno($ch),
 				'error'		=> curl_error($ch),
 				'queue'		=> 'off'
 			);
+			$cinfo = array_merge($cinfo, $addInfo);
+			$header = '';
 			// Check retry count
 			$retries++;
 			if ( $retries < $this->retries_max ) {
@@ -683,7 +683,7 @@ class Response {
 		if ( array_key_exists($meta_key, $this->header) ) {
 			return $this->header[$meta_key];
 		}
-		trigger_error('PRESTO RESPONSE: reference to invalid meta key - "'.$meta_key.'" ');
+		trigger_error('PRESTO RESPONSE: reference to invalid meta key - '.$meta_key);
 		return null;
 	}
 
