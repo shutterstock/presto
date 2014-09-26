@@ -171,9 +171,9 @@ class Presto
     /**
      * Convenience function to load configuration for how to communicate with different services
      *
-     * @param  array  $config  configuration for services
+     * @param  object  $config  stdclass configuration for services
      */
-    public static function loadConfig(array $config)
+    public static function loadConfig($config)
     {
         self::$config = $config;
     }
@@ -190,7 +190,7 @@ class Presto
             return self::$config->$service_name;
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -217,7 +217,7 @@ class Presto
      */
     public function setReferer($referer)
     {
-        $this->curl_opts[CURLOPT_REFERER] = $ref;
+        $this->curl_opts[CURLOPT_REFERER] = $referer;
     }
 
     /**
@@ -583,7 +583,7 @@ class Presto
         if ($this->trigger_error) {
             trigger_error("{$this->error_log_prefix}{$message}");
         } else {
-            error_log("{$this->error_log_prefix}{$msg}");
+            error_log("{$this->error_log_prefix}{$message}");
         }
     }
 
@@ -604,7 +604,7 @@ class Presto
                 'url'       => $log_data['url'],
                 'errorno'   => $log_data['errorno'],
                 'error'     => $log_data['error'],
-                'queue'     => $log_data['queue']
+                'queue'     => $log_data['queue'],
             ];
         } else {
             self::$profiling[] = [
@@ -612,7 +612,7 @@ class Presto
                 'http_code'         => $log_data['http_code'],
                 'total_time'        => $log_data['total_time'],
                 'pretransfer_time'  => $log_data['pretransfer_time'],
-                'queue'             => $log_data['queue']
+                'queue'             => $log_data['queue'],
             ];
         }
     }
