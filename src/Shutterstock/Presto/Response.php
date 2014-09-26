@@ -25,14 +25,14 @@ class Response
     public $meta = [];
 
     /**
-     * @var array
-     */
-    public $header = [];
-
-    /**
      * @var string
      */
     public $data = null;
+
+    /**
+     * @var array
+     */
+    public $header = [];
 
     /**
      * Constructor
@@ -47,7 +47,7 @@ class Response
         $this->data = $data;
 
         if (!is_null($header)) {
-            $this->parseHeader($header);
+            $this->header = $this->parseHeader($header);
         }
     }
 
@@ -74,20 +74,30 @@ class Response
     /**
      * Parse response headers into an array
      *
-     * @param  string  $header  headers from request
+     * @param   string  $header  headers from request
+     * @return  array            parsed header array
      */
     public function parseHeader($header)
     {
+        $parsed_header = [];
+
         $header_lines = explode("\r\n", $header);
         if (count($header_lines) > 0) {
             foreach ($header_lines as $line) {
                 $header = explode(':', $line);
                 if (count($header) > 1) {
                     $label = array_shift($header);
-                    $this->header[$label] = implode(':', $header);
+
+                    $value = $header;
+                    $value = implode(':', $header);
+                    $value = trim($value);
+
+                    $parsed_header[$label] = $value;
                 }
             }
         }
+
+        return $parsed_header;
     }
 
 }
