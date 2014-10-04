@@ -56,7 +56,15 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testStatusCode()
     {
-        // todo
+        $response = $this->presto->get(
+            self::$test_endpoint . 'status/418',
+            [],
+            function(Response $response) {
+                return $response->http_code;
+            }
+        );
+
+        $this->assertEquals(418, $response);
     }
 
     /**
@@ -222,7 +230,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testHeadRequest()
     {
-        // todo
+        $response = $this->presto->head(self::$test_endpoint . 'headers');
+        $this->assertEquals(200, $response->http_code);
     }
 
     /**
@@ -230,7 +239,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testOptionRequest()
     {
-        // todo
+        $response = $this->presto->options(self::$test_endpoint . 'headers');
+        $this->assertEquals(200, $response->http_code);
     }
 
     /**
@@ -238,7 +248,28 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testQueueProcess()
     {
-        // todo
+        Presto::initQueue();
+        $status_codes = [
+            418,
+            418,
+        ];
+
+        $requests = [];
+        foreach ($status_codes as $code) {
+            $requests[$code] = new Presto();
+            $requests[$code]->queue_enabled = true;
+            $requests[$code]->get(
+                self::$test_endpoint . "status/{$code}",
+                [],
+                function(Response $response) {
+                    return $response->http_code;
+                }
+            );
+        }
+
+        Presto::processQueue();
+
+        var_dump($responses);
     }
 
     protected function getGenericData()
