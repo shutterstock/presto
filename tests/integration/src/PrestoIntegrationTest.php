@@ -164,7 +164,27 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testDeleteRequest()
     {
-        // todo
+        $response = $this->presto->delete(
+            self::$test_endpoint . 'delete',
+            $this->getGenericData(),
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['form'];
+            }
+        );
+        $this->assertEquals($this->getGenericData(), $response);
+
+        $response = $this->presto->delete(
+            self::$test_endpoint . 'delete',
+            Presto::arrayToUrlParams($this->getGenericData()),
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['form'];
+            }
+        );
+        $this->assertEquals($this->getGenericData(), $response);
     }
 
     /**
@@ -172,7 +192,29 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testCustomRequest()
     {
-        // todo
+        $response = $this->presto->custom(
+            'PATCH',
+            self::$test_endpoint . 'patch',
+            $this->getGenericData(),
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['form'];
+            }
+        );
+        $this->assertEquals($this->getGenericData(), $response);
+
+        $response = $this->presto->custom(
+            'PATCH',
+            self::$test_endpoint . 'patch',
+            Presto::arrayToUrlParams($this->getGenericData()),
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['form'];
+            }
+        );
+        $this->assertEquals($this->getGenericData(), $response);
     }
 
     /**
