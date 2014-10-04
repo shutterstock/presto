@@ -468,14 +468,13 @@ class Presto
      * @param   array   $options     additional CURL options to set/override for the request
      * @return  object               Response class instance
      */
-    public function get($url, $url_params = null, $callback = null, array $options = [])
+    public function get($url, $url_params = [], $callback = null, array $options = [])
     {
-        if (!is_null($url_params)) {
-            if (is_array($url_params) && !empty($url_params)) {
-                $url .= '?' . http_build_query($url_params);
-            } else {
-                $url .= '?' . $url_params;
+        if (!empty($url_params)) {
+            if (is_array($url_params)) {
+                $url_params = self::arrayToUrlParams($url_params);
             }
+            $url .= '?' . $url_params;
         }
 
         $options[CURLOPT_HTTPGET] = true;
@@ -487,15 +486,22 @@ class Presto
      * To post a file, use the $data array and set the value to @/path/to/file
      *
      * @param   string  $url       URL to use for the request
-     * @param   array   $data      list of values to send in the request
+     * @param   mixed   $data      list of values to send in the request
      * @param   object  $callback  function to call after request
      * @param   array   $options   additional CURL options to set/override for the request
      * @return  object             Response class instance
      */
-    public function post($url, array $data = [], $callback = null, array $options = [])
+    public function post($url, $data = [], $callback = null, array $options = [])
     {
         $options[CURLOPT_POST] = true;
-        $options[CURLOPT_POSTFIELDS] = $data;
+
+        if (!empty($data)) {
+            if (is_array($data)) {
+                $data = self::arrayToUrlParams($data);
+            }
+            $options[CURLOPT_POSTFIELDS] = $data;
+        }
+
         return $this->makeRequest($url, $options, $callback);
     }
 
@@ -509,7 +515,7 @@ class Presto
      * @param   array   $options   additional CURL options to set/override for the request
      * @return  object             Response class instance
      */
-    public function put($url, $data, $callback = null, array $options = [])
+    public function put($url, $data = [], $callback = null, array $options = [])
     {
         return $this->custom('PUT', $url, $data, $callback, $options);
     }
@@ -519,11 +525,11 @@ class Presto
      *
      * @param   string  $url       URL to use for the request
      * @param   mixed   $data      additional data to submit with request
-     * @param   object  $callback   function to call after request
+     * @param   object  $callback  function to call after request
      * @param   array   $options   additional CURL options to set/override for the request
      * @return  object             Response class instance
      */
-    public function delete($url, $data, $callback = null, array $options = [])
+    public function delete($url, $data = [], $callback = null, array $options = [])
     {
         return $this->custom('DELETE', $url, $data, $callback, $options);
     }
@@ -538,11 +544,14 @@ class Presto
      * @param   array   $options   additional CURL options to set/override for the request
      * @return  object             Response class instance
      */
-    public function custom($method, $url, $data = null, $callback = null, array $options = [])
+    public function custom($method, $url, $data = [], $callback = null, array $options = [])
     {
         $options[CURLOPT_CUSTOMREQUEST] = $method;
 
-        if (isset($data)) {
+        if (!empty($data)) {
+            if (is_array($data)) {
+                $data = self::arrayToUrlParams($data);
+            }
             $options[CURLOPT_POSTFIELDS] = $data;
         }
 

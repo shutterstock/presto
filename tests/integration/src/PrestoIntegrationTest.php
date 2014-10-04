@@ -82,47 +82,25 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
     {
         $response = $this->presto->get(
             self::$test_endpoint . 'get',
-            [
-                'foo'   => 'bar',
-                'test'  => 1,
-                'test'  => 2,
-            ],
+            $this->getGenericData(),
             function(Response $response) {
                 $data = $response->data;
                 $data = json_decode($data, true);
                 return $data['args'];
             }
         );
-
-        $this->assertEquals([
-            'foo'   => 'bar',
-            'test'  => 1,
-            'test'  => 2,
-        ], $response);
+        $this->assertEquals($this->getGenericData(), $response);
 
         $response = $this->presto->get(
             self::$test_endpoint . 'get',
-            Presto::arrayToUrlParams([
-                'foo'   => 'bar',
-                'test'  => [
-                    1,
-                    2,
-                ],
-            ]),
+            Presto::arrayToUrlParams($this->getGenericData()),
             function(Response $response) {
                 $data = $response->data;
                 $data = json_decode($data, true);
                 return $data['args'];
             }
         );
-
-        $this->assertEquals([
-            'foo'   => 'bar',
-            'test'  => [
-                1,
-                2,
-            ],
-        ], $response);
+        $this->assertEquals($this->getGenericData(), $response);
     }
 
     /**
@@ -130,7 +108,27 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testPostRequest()
     {
-        // todo
+        $response = $this->presto->post(
+            self::$test_endpoint . 'post',
+            $this->getGenericData(),
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['form'];
+            }
+        );
+        $this->assertEquals($this->getGenericData(), $response);
+
+        $response = $this->presto->post(
+            self::$test_endpoint . 'post',
+            Presto::arrayToUrlParams($this->getGenericData()),
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['form'];
+            }
+        );
+        $this->assertEquals($this->getGenericData(), $response);
     }
 
     /**
@@ -138,7 +136,27 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testPutRequest()
     {
-        // todo
+        $response = $this->presto->put(
+            self::$test_endpoint . 'put',
+            $this->getGenericData(),
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['form'];
+            }
+        );
+        $this->assertEquals($this->getGenericData(), $response);
+
+        $response = $this->presto->put(
+            self::$test_endpoint . 'put',
+            Presto::arrayToUrlParams($this->getGenericData()),
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['form'];
+            }
+        );
+        $this->assertEquals($this->getGenericData(), $response);
     }
 
     /**
@@ -179,6 +197,17 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
     public function testQueueProcess()
     {
         // todo
+    }
+
+    protected function getGenericData()
+    {
+        return [
+            'foo'   => 'bar',
+            'test'  => [
+                1,
+                2,
+            ],
+        ];
     }
 
 }
