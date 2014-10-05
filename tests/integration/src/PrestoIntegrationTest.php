@@ -6,27 +6,18 @@ use Shutterstock\Presto\Response;
 class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
 {
 
-    private static $test_endpoint = 'http://httpbin.org/';
-
-    private $presto;
-
-    /**
-     * run on start of test
-     * set up presto client for all requests
-     */
-    protected function setUp()
-    {
-        $this->presto = new Presto();
-    }
+    protected static $TEST_ENDPOINT = 'http://httpbin.org/';
 
     /**
      * @covers  Shutterstock\Presto\Presto::executeRequest
      */
     public function testExecuteRequest()
     {
-        $handle = curl_init(self::$test_endpoint . 'get');
-        curl_setopt_array($handle, $this->presto->curl_opts);
-        $response = $this->presto->executeRequest($handle);
+        $presto = new Presto();
+
+        $handle = curl_init(self::$TEST_ENDPOINT . 'get');
+        curl_setopt_array($handle, $presto->curl_opts);
+        $response = $presto->executeRequest($handle);
 
         $this->assertEquals(200, $response->http_code);
     }
@@ -36,8 +27,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testMakeRequest()
     {
-        $response = $this->presto->makeRequest(
-            self::$test_endpoint . 'get',
+        $response = (new Presto())->makeRequest(
+            self::$TEST_ENDPOINT . 'get',
             [],
             function(Response $response) {
                 return $response->http_code;
@@ -52,8 +43,9 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testUserAgent()
     {
-        $response = $this->presto->makeRequest(
-            self::$test_endpoint . 'user-agent',
+        $presto = new Presto();
+        $response = $presto->makeRequest(
+            self::$TEST_ENDPOINT . 'user-agent',
             [],
             function(Response $response) {
                 $data = $response->data;
@@ -62,7 +54,7 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertEquals($this->presto->curl_opts[CURLOPT_USERAGENT], $response);
+        $this->assertEquals($presto->curl_opts[CURLOPT_USERAGENT], $response);
     }
 
     /**
@@ -70,12 +62,13 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testHeaders()
     {
-        $this->presto->setHeaders([
+        $presto = new Presto();
+        $presto->setHeaders([
             'X-Powered-By' => 'Awesomeness',
         ]);
 
-        $response = $this->presto->makeRequest(
-            self::$test_endpoint . 'headers',
+        $response = $presto->makeRequest(
+            self::$TEST_ENDPOINT . 'headers',
             [],
             function(Response $response) {
                 $data = $response->data;
@@ -93,8 +86,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testStatusCode()
     {
-        $response = $this->presto->get(
-            self::$test_endpoint . 'status/418',
+        $response = (new Presto())->makeRequest(
+            self::$TEST_ENDPOINT . 'status/418',
             [],
             function(Response $response) {
                 return $response->http_code;
@@ -109,10 +102,11 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testAuth()
     {
-        $this->presto->setAuth('username', 'password');
+        $presto = new Presto();
+        $presto->setAuth('username', 'password');
 
-        $response = $this->presto->makeRequest(
-            self::$test_endpoint . 'basic-auth/username/password',
+        $response = $presto->makeRequest(
+            self::$TEST_ENDPOINT . 'basic-auth/username/password',
             [],
             function(Response $response) {
                 $data = $response->data;
@@ -130,8 +124,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testGetRequest()
     {
-        $response = $this->presto->get(
-            self::$test_endpoint . 'get',
+        $response = (new Presto())->get(
+            self::$TEST_ENDPOINT . 'get',
             $this->getGenericData(),
             function(Response $response) {
                 $data = $response->data;
@@ -141,8 +135,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($this->getGenericData(), $response);
 
-        $response = $this->presto->get(
-            self::$test_endpoint . 'get',
+        $response = (new Presto())->get(
+            self::$TEST_ENDPOINT . 'get',
             Presto::arrayToUrlParams($this->getGenericData()),
             function(Response $response) {
                 $data = $response->data;
@@ -158,8 +152,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testPostRequest()
     {
-        $response = $this->presto->post(
-            self::$test_endpoint . 'post',
+        $response = (new Presto())->post(
+            self::$TEST_ENDPOINT . 'post',
             $this->getGenericData(),
             function(Response $response) {
                 $data = $response->data;
@@ -169,8 +163,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($this->getGenericData(), $response);
 
-        $response = $this->presto->post(
-            self::$test_endpoint . 'post',
+        $response = (new Presto())->post(
+            self::$TEST_ENDPOINT . 'post',
             Presto::arrayToUrlParams($this->getGenericData()),
             function(Response $response) {
                 $data = $response->data;
@@ -186,8 +180,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testPutRequest()
     {
-        $response = $this->presto->put(
-            self::$test_endpoint . 'put',
+        $response = (new Presto())->put(
+            self::$TEST_ENDPOINT . 'put',
             $this->getGenericData(),
             function(Response $response) {
                 $data = $response->data;
@@ -197,8 +191,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($this->getGenericData(), $response);
 
-        $response = $this->presto->put(
-            self::$test_endpoint . 'put',
+        $response = (new Presto())->put(
+            self::$TEST_ENDPOINT . 'put',
             Presto::arrayToUrlParams($this->getGenericData()),
             function(Response $response) {
                 $data = $response->data;
@@ -214,8 +208,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testDeleteRequest()
     {
-        $response = $this->presto->delete(
-            self::$test_endpoint . 'delete',
+        $response = (new Presto())->delete(
+            self::$TEST_ENDPOINT . 'delete',
             $this->getGenericData(),
             function(Response $response) {
                 $data = $response->data;
@@ -225,8 +219,8 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($this->getGenericData(), $response);
 
-        $response = $this->presto->delete(
-            self::$test_endpoint . 'delete',
+        $response = (new Presto())->delete(
+            self::$TEST_ENDPOINT . 'delete',
             Presto::arrayToUrlParams($this->getGenericData()),
             function(Response $response) {
                 $data = $response->data;
@@ -242,9 +236,9 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testCustomRequest()
     {
-        $response = $this->presto->custom(
+        $response = (new Presto())->custom(
             'PATCH',
-            self::$test_endpoint . 'patch',
+            self::$TEST_ENDPOINT . 'patch',
             $this->getGenericData(),
             function(Response $response) {
                 $data = $response->data;
@@ -254,9 +248,9 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals($this->getGenericData(), $response);
 
-        $response = $this->presto->custom(
+        $response = (new Presto())->custom(
             'PATCH',
-            self::$test_endpoint . 'patch',
+            self::$TEST_ENDPOINT . 'patch',
             Presto::arrayToUrlParams($this->getGenericData()),
             function(Response $response) {
                 $data = $response->data;
@@ -272,7 +266,7 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testHeadRequest()
     {
-        $response = $this->presto->head(self::$test_endpoint . 'headers');
+        $response = (new Presto())->head(self::$TEST_ENDPOINT . 'headers');
         $this->assertEquals(200, $response->http_code);
     }
 
@@ -281,7 +275,7 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testOptionRequest()
     {
-        $response = $this->presto->options(self::$test_endpoint . 'headers');
+        $response = (new Presto())->options(self::$TEST_ENDPOINT . 'headers');
         $this->assertEquals(200, $response->http_code);
     }
 
@@ -301,7 +295,7 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
             $requests[$code] = new Presto();
             $requests[$code]->queue_enabled = true;
             $requests[$code]->get(
-                self::$test_endpoint . "status/{$code}",
+                self::$TEST_ENDPOINT . "status/{$code}",
                 [],
                 function(Response $response) {
                     return $response->http_code;
