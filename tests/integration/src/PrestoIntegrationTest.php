@@ -284,9 +284,13 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testQueueProcess()
     {
+        Presto::$profiling_count = 0;
+        Presto::$profiling = [];
+
         Presto::initQueue();
         $status_codes = [
-            418,
+            401,
+            404,
             418,
         ];
 
@@ -303,9 +307,13 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
             );
         }
 
-        Presto::processQueue();
+        $queue_result = Presto::processQueue();
+        $this->assertEquals(true, $queue_result);
 
-        var_dump($responses);
+        $profiling = Presto::getProfiling();
+        $this->assertEquals($status_codes[0], $profiling[0]['http_code']);
+        $this->assertEquals($status_codes[1], $profiling[1]['http_code']);
+        $this->assertEquals($status_codes[2], $profiling[2]['http_code']);
     }
 
     protected function getGenericData()

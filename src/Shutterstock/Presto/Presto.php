@@ -391,7 +391,7 @@ class Presto
             $multi_handle = curl_multi_exec(self::$queue_handle, $active);
         } while ($multi_handle == CURLM_CALL_MULTI_PERFORM);
 
-        while ($multi_handle && $multi_result == CURLM_OK) {
+        while ($active && $multi_handle == CURLM_OK) {
             if (curl_multi_select(self::$queue_handle) != -1) {
                 do {
                     $multi_handle = curl_multi_exec(self::$queue_handle, $active);
@@ -631,7 +631,7 @@ class Presto
      *
      * @return  array  profile of all calls made during runtime
      */
-    public function getProfiling()
+    public static function getProfiling()
     {
         return self::$profiling;
     }
