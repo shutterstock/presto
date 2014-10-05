@@ -20,19 +20,31 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers  Shutterstock\Presto\Presto::makeRequest
-     */
-    public function testMakeRequest()
-    {
-        // todo
-    }
-
-    /**
      * @covers  Shutterstock\Presto\Presto::executeRequest
      */
     public function testExecuteRequest()
     {
-        // todo
+        $handle = curl_init(self::$test_endpoint . 'get');
+        curl_setopt_array($handle, $this->presto->curl_opts);
+        $response = $this->presto->executeRequest($handle);
+
+        $this->assertEquals(200, $response->http_code);
+    }
+
+    /**
+     * @covers  Shutterstock\Presto\Presto::makeRequest
+     */
+    public function testMakeRequest()
+    {
+        $response = $this->presto->makeRequest(
+            self::$test_endpoint . 'get',
+            [],
+            function(Response $response) {
+                return $response->http_code;
+            }
+        );
+
+        $this->assertEquals(200, $response);
     }
 
     /**
@@ -40,7 +52,17 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testUserAgent()
     {
-        // todo
+        $response = $this->presto->makeRequest(
+            self::$test_endpoint . 'user-agent',
+            [],
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['user-agent'];
+            }
+        );
+
+        $this->assertEquals($this->presto->curl_opts[CURLOPT_USERAGENT], $response);
     }
 
     /**
@@ -48,7 +70,22 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
      */
     public function testHeaders()
     {
-        // todo
+        $this->presto->setHeaders([
+            'X-Powered-By' => 'Awesomeness',
+        ]);
+
+        $response = $this->presto->makeRequest(
+            self::$test_endpoint . 'headers',
+            [],
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data['headers'];
+            }
+        );
+
+        $this->assertArrayHasKey('X-Powered-By', $response);
+        $this->assertEquals('Awesomeness', $response['X-Powered-By']);
     }
 
     /**
@@ -68,19 +105,24 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers  Shutterstock\Presto\Response::parseHeaders
-     */
-    public function testHeaderParse()
-    {
-        // todo
-    }
-
-    /**
      * @covers  Shutterstock\Presto\Presto::setAuth
      */
     public function testAuth()
     {
-        // todo
+        $this->presto->setAuth('username', 'password');
+
+        $response = $this->presto->makeRequest(
+            self::$test_endpoint . 'basic-auth/username/password',
+            [],
+            function(Response $response) {
+                $data = $response->data;
+                $data = json_decode($data, true);
+                return $data;
+            }
+        );
+
+        $this->assertEquals(true, $response['authenticated']);
+        $this->assertEquals('username', $response['user']);
     }
 
     /**
