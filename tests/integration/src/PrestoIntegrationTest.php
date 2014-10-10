@@ -29,7 +29,7 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
     {
         $response = (new Presto())->makeRequest(
             self::$TEST_ENDPOINT . 'get',
-            [],
+            array(),
             function(Response $response) {
                 return $response->http_code;
             }
@@ -46,7 +46,7 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
         $presto = new Presto();
         $response = $presto->makeRequest(
             self::$TEST_ENDPOINT . 'user-agent',
-            [],
+            array(),
             function(Response $response) {
                 $data = $response->data;
                 $data = json_decode($data, true);
@@ -63,13 +63,13 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
     public function testHeaders()
     {
         $presto = new Presto();
-        $presto->setHeaders([
+        $presto->setHeaders(array(
             'X-Powered-By' => 'Awesomeness',
-        ]);
+        ));
 
         $response = $presto->makeRequest(
             self::$TEST_ENDPOINT . 'headers',
-            [],
+            array(),
             function(Response $response) {
                 $data = $response->data;
                 $data = json_decode($data, true);
@@ -88,7 +88,7 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
     {
         $response = (new Presto())->makeRequest(
             self::$TEST_ENDPOINT . 'status/418',
-            [],
+            array(),
             function(Response $response) {
                 return $response->http_code;
             }
@@ -107,7 +107,7 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
 
         $response = $presto->makeRequest(
             self::$TEST_ENDPOINT . 'basic-auth/username/password',
-            [],
+            array(),
             function(Response $response) {
                 $data = $response->data;
                 $data = json_decode($data, true);
@@ -285,22 +285,22 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
     public function testQueueProcess()
     {
         Presto::$profiling_count = 0;
-        Presto::$profiling = [];
+        Presto::$profiling = array();
 
         Presto::initQueue();
-        $status_codes = [
+        $status_codes = array(
             401,
             404,
             418,
-        ];
+        );
 
-        $requests = [];
+        $requests = array();
         foreach ($status_codes as $code) {
             $requests[$code] = new Presto();
             $requests[$code]->queue_enabled = true;
             $requests[$code]->get(
                 self::$TEST_ENDPOINT . "status/{$code}",
-                [],
+                array(),
                 function(Response $response) {
                     return $response->http_code;
                 }
@@ -318,13 +318,13 @@ class PrestoIntegrationTest extends PHPUnit_Framework_TestCase
 
     protected function getGenericData()
     {
-        return [
+        return array(
             'foo'   => 'bar',
-            'test'  => [
+            'test'  => array(
                 1,
                 2,
-            ],
-        ];
+            ),
+        );
     }
 
 }

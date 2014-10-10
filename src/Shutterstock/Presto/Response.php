@@ -22,7 +22,7 @@ class Response
     /**
      * @var array
      */
-    public $meta = [];
+    public $meta = array();
 
     /**
      * @var string
@@ -32,7 +32,7 @@ class Response
     /**
      * @var array
      */
-    public $header = [];
+    public $header = array();
 
     /**
      * Constructor
@@ -79,7 +79,7 @@ class Response
      */
     public function parseHeader($header)
     {
-        $parsed_header = [];
+        $parsed_header = array();
 
         $header_lines = explode("\r\n", $header);
         if (count($header_lines) > 0) {

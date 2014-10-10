@@ -9,7 +9,7 @@ use Shutterstock\Presto\Presto;
 class PrestoTest extends PHPUnit_Framework_TestCase
 {
 
-    private $error_holder = [];
+    private $error_holder = array();
     private $error_log_destination;
 
     /**
@@ -18,7 +18,7 @@ class PrestoTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        set_error_handler([$this, 'errorHandler']);
+        set_error_handler(array($this, 'errorHandler'));
 
         $this->error_log_destination = ini_get('error_log');
         // ini_set('error_log', '/dev/stdout');
@@ -45,13 +45,13 @@ class PrestoTest extends PHPUnit_Framework_TestCase
         $line,
         $context
     ) {
-        array_push($this->error_holder, [
+        array_push($this->error_holder, array(
             'errno'       => $number,
             'errstr'      => $string,
             'errfile'     => $file,
             'errline'     => $line,
             'errcontext'  => $context,
-        ]);
+        ));
     }
 
     /**
@@ -97,9 +97,9 @@ class PrestoTest extends PHPUnit_Framework_TestCase
      */
     public function testObjectConstructOverridesOptions()
     {
-        $presto = new Presto([
+        $presto = new Presto(array(
             CURLOPT_HEADER => false,
-        ]);
+        ));
 
         $this->assertFalse($presto->curl_opts[CURLOPT_HEADER]);
     }
@@ -124,7 +124,7 @@ class PrestoTest extends PHPUnit_Framework_TestCase
         $reflectionProperty = $reflectionPresto->getProperty('request_queue');
         $reflectionProperty->setAccessible(true);
 
-        $reflectionProperty->setValue($presto, ['value']);
+        $reflectionProperty->setValue($presto, array('value'));
         $presto::initQueue();
 
         $this->assertEmpty($reflectionProperty->getValue($presto));
@@ -230,31 +230,31 @@ class PrestoTest extends PHPUnit_Framework_TestCase
     public function testHeaderSet()
     {
         $presto = new Presto();
-        $presto->setHeaders([
+        $presto->setHeaders(array(
             'Accept' => 'application/xml',
-        ]);
+        ));
 
         $this->assertEquals(
             array_merge(
                 $presto::$curl_opts_defaults[CURLOPT_HTTPHEADER],
-                [
+                array(
                     'Accept' => 'application/xml',
-                ]
+                )
             ),
             $presto->curl_opts[CURLOPT_HTTPHEADER]
         );
 
         $presto = new Presto();
-        $presto->setHeaders([
+        $presto->setHeaders(array(
             'User-Agent' => 'Presto',
-        ]);
+        ));
 
         $this->assertEquals(
             array_merge(
                 $presto::$curl_opts_defaults[CURLOPT_HTTPHEADER],
-                [
+                array(
                     'User-Agent' => 'Presto',
-                ]
+                )
             ),
             $presto->curl_opts[CURLOPT_HTTPHEADER]
         );
@@ -266,13 +266,13 @@ class PrestoTest extends PHPUnit_Framework_TestCase
     public function testHeaderSetOverride()
     {
         $presto = new Presto();
-        $presto->setHeaders([
+        $presto->setHeaders(array(
             'User-Agent' => 'Presto',
-        ], true);
+        ), true);
 
-        $this->assertEquals([
+        $this->assertEquals(array(
                 'User-Agent' => 'Presto',
-            ],
+            ),
             $presto->curl_opts[CURLOPT_HTTPHEADER]
         );
     }
@@ -284,10 +284,10 @@ class PrestoTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             'foo=bar&test=true',
-            Presto::arrayToUrlParams([
+            Presto::arrayToUrlParams(array(
                 'foo'   => 'bar',
                 'test'  => 'true',
-            ])
+            ))
         );
     }
 
@@ -298,10 +298,10 @@ class PrestoTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             'foo=bar|test=true',
-            Presto::arrayToUrlParams([
+            Presto::arrayToUrlParams(array(
                 'foo'   => 'bar',
                 'test'  => 'true',
-            ], '|')
+            ), '|')
         );
     }
 
@@ -312,12 +312,12 @@ class PrestoTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             'foo=bar&foo=test',
-            Presto::arrayToUrlParams([
-                'foo'  => [
+            Presto::arrayToUrlParams(array(
+                'foo'  => array(
                     'bar',
                     'test',
-                ],
-            ])
+                ),
+            ))
         );
     }
 
@@ -328,12 +328,12 @@ class PrestoTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             'foo=bar|foo=test',
-            Presto::arrayToUrlParams([
-                'foo'  => [
+            Presto::arrayToUrlParams(array(
+                'foo'  => array(
                     'bar',
                     'test',
-                ],
-            ], '|')
+                ),
+            ), '|')
         );
     }
 
@@ -367,21 +367,21 @@ class PrestoTest extends PHPUnit_Framework_TestCase
     public function testProfiling()
     {
         $presto = new Presto();
-        $presto::logProfiling([
+        $presto::logProfiling(array(
             'url'               => 'http://www.shutterstock.com/',
             'http_code'         => 200,
             'total_time'        => .12,
             'pretransfer_time'  => .05,
             'queue'             => 'off',
-        ]);
+        ));
 
-        $this->assertContains([
+        $this->assertContains(array(
             'url'               => 'http://www.shutterstock.com/',
             'http_code'         => 200,
             'total_time'        => .12,
             'pretransfer_time'  => .05,
             'queue'             => 'off',
-        ], $presto::$profiling);
+        ), $presto::$profiling);
     }
 
     /**
@@ -390,19 +390,19 @@ class PrestoTest extends PHPUnit_Framework_TestCase
     public function testProfilingErrors()
     {
         $presto = new Presto();
-        $presto::logProfiling([
+        $presto::logProfiling(array(
             'url'      => 'http://www.shutterstock.com/',
             'errorno'  => CURLE_URL_MALFORMAT_USER,
             'error'    => 'Bad user credentials',
             'queue'    => 'off',
-        ]);
+        ));
 
-        $this->assertContains([
+        $this->assertContains(array(
             'url'      => 'http://www.shutterstock.com/',
             'errorno'  => CURLE_URL_MALFORMAT_USER,
             'error'    => 'Bad user credentials',
             'queue'    => 'off',
-        ], $presto::$profiling);
+        ), $presto::$profiling);
     }
 
     /**
@@ -412,30 +412,30 @@ class PrestoTest extends PHPUnit_Framework_TestCase
     {
         $presto = new Presto();
         for ($i = 0; $i <= $presto::$profiling_max; $i++) {
-            $presto::logProfiling([
+            $presto::logProfiling(array(
                 'url'               => 'http://www.shutterstock.com/',
                 'http_code'         => 200,
                 'total_time'        => .12,
                 'pretransfer_time'  => .05,
                 'queue'             => 'off',
-            ]);
+            ));
         }
 
-        $this->assertEmpty($presto::logProfiling([
+        $this->assertEmpty($presto::logProfiling(array(
             'url'               => 'http://www.bigstockphoto.com/',
             'http_code'         => 200,
             'total_time'        => .12,
             'pretransfer_time'  => .05,
             'queue'             => 'off',
-        ]));
+        )));
 
-        $this->assertNotContains([
+        $this->assertNotContains(array(
             'url'               => 'http://www.bigstockphoto.com/',
             'http_code'         => 200,
             'total_time'        => .12,
             'pretransfer_time'  => .05,
             'queue'             => 'off',
-        ], $presto::$profiling); 
+        ), $presto::$profiling);
     }
 
     /**
@@ -449,14 +449,14 @@ class PrestoTest extends PHPUnit_Framework_TestCase
 
     protected function getServiceConfig()
     {
-        return (object) [
-            'alpha'  => [
+        return (object) array(
+            'alpha'  => array(
                 'setting'  => true,
-            ],
-            'beta'   => [
+            ),
+            'beta'   => array(
                 'setting'  => false,
-            ],
-        ];
+            ),
+        );
     }
 
 }

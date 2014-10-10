@@ -74,7 +74,7 @@ class Presto
      *
      * @var array
      */
-    private static $request_queue = [];
+    private static $request_queue = array();
 
     /**
      * multi_curl handle for processing simultaneous curl requests
@@ -95,7 +95,7 @@ class Presto
      *
      * @var array
      */
-    public static $curl_opts_defaults = [
+    public static $curl_opts_defaults = array(
         CURLOPT_CONNECTTIMEOUT  => 2,
         CURLOPT_TIMEOUT_MS      => 10000,
         CURLOPT_USERAGENT       => 'Presto ',
@@ -104,12 +104,12 @@ class Presto
         CURLOPT_RETURNTRANSFER  => true,
         CURLOPT_HEADER          => true,
         CURLOPT_ENCODING        => 'utf-8',
-        CURLOPT_HTTPHEADER      => [
+        CURLOPT_HTTPHEADER      => array(
             'Accept'                => 'application/json',
             'Accept-Language'       => 'en-us,en',
             'Accept-Encoding'       => 'gzip, deflate',
-                                   ],
-        ];
+                                   ),
+        );
 
     /**
      * CURL options to use in the instance
@@ -117,12 +117,12 @@ class Presto
      *
      * @var array
      */
-    public $curl_opts = [];
+    public $curl_opts = array();
 
     /**
      * @var array
      */
-    public static $profiling = [];
+    public static $profiling = array();
 
     /**
      * @var integer maximum number of profiling entries to record
@@ -144,7 +144,7 @@ class Presto
      *
      * @param  array  $curl_opts  curl options to set/override
      */
-    public function __construct(array $curl_opts = [])
+    public function __construct(array $curl_opts = array())
     {
         $this->curl_opts = self::$curl_opts_defaults;
         $this->curl_opts[CURLOPT_USERAGENT] .= self::VERSION;
@@ -164,7 +164,7 @@ class Presto
      */
     public static function initQueue()
     {
-        self::$request_queue = [];
+        self::$request_queue = array();
         self::$queue_handle = curl_multi_init();
     }
 
@@ -251,7 +251,7 @@ class Presto
      * @param   object  $callback  function to callback after request is executed
      * @return  object             Response class instance or callback response
      */
-    public function makeRequest($url, array $options = [], $callback = null)
+    public function makeRequest($url, array $options = array(), $callback = null)
     {
         if ($url == '') {
             $this->logError('No URL passed into makeRequest method');
@@ -275,7 +275,7 @@ class Presto
             $options = $this->curl_opts;
         }
 
-        $curl_headers = [];
+        $curl_headers = array();
         foreach ($options[CURLOPT_HTTPHEADER] as $key => $value) {
             $curl_headers[] = "{$key}: {$value}";
         }
@@ -303,7 +303,7 @@ class Presto
      * @param   array   $options  array of curl configs
      * @return  object            Response class instance
      */
-    public function executeRequest($handle, array $options = [])
+    public function executeRequest($handle, array $options = array())
     {
         static $retries = 0;
 
@@ -311,12 +311,12 @@ class Presto
         $info = curl_getinfo($handle);
 
         if ($result === false) {
-            $info = array_merge($info, [
+            $info = array_merge($info, array(
                 'is_success'  => false,
                 'errorno'     => curl_errno($handle),
                 'error'       => curl_error($handle),
                 'queue'       => 'off',
-            ]);
+            ));
             $header = '';
 
             $retries++;
@@ -367,12 +367,12 @@ class Presto
             self::initQueue();
         }
 
-        self::$request_queue[] = [
+        self::$request_queue[] = array(
             'url'       => $url,
             'handle'    => $handle,
             'callback'  => $callback,
             'response'  => '',
-        ];
+        );
         curl_multi_add_handle(self::$queue_handle, $handle);
     }
 
@@ -402,13 +402,13 @@ class Presto
         foreach (self::$request_queue as $key => $value) {
             $error = curl_error($value['handle']);
             if (!empty($error)) {
-                $info = [
+                $info = array(
                     'is_success'  => false,
                     'url'         => $value['url'],
                     'errorno'     => curl_errno($value['handle']),
                     'error'       => $error,
                     'queue'       => 'ON'
-                ];
+                );
 
                 $result = false;
                 $header = '';
@@ -430,7 +430,7 @@ class Presto
         }
 
         curl_multi_close(self::$queue_handle);
-        self::$request_queue = [];
+        self::$request_queue = array();
         return true;
     }
 
@@ -441,7 +441,7 @@ class Presto
      * @param   array   $options  additional CURL options to set/override for the request
      * @return  object            Response class instance
      */
-    public function options($url, array $options = [])
+    public function options($url, array $options = array())
     {
         return $this->custom('OPTIONS', $url, $options);
     }
@@ -453,7 +453,7 @@ class Presto
      * @param   array   $options  additional CURL options to set/override for the request
      * @return  object            Response class instance
      */
-    public function head($url, array $options = [])
+    public function head($url, array $options = array())
     {
         $options[CURLOPT_NOBODY] = true;
         return $this->makeRequest($url, $options);
@@ -468,7 +468,7 @@ class Presto
      * @param   array   $options     additional CURL options to set/override for the request
      * @return  object               Response class instance
      */
-    public function get($url, $url_params = [], $callback = null, array $options = [])
+    public function get($url, $url_params = array(), $callback = null, array $options = array())
     {
         if (!empty($url_params)) {
             if (is_array($url_params)) {
@@ -491,7 +491,7 @@ class Presto
      * @param   array   $options   additional CURL options to set/override for the request
      * @return  object             Response class instance
      */
-    public function post($url, $data = [], $callback = null, array $options = [])
+    public function post($url, $data = array(), $callback = null, array $options = array())
     {
         $options[CURLOPT_POST] = true;
 
@@ -515,7 +515,7 @@ class Presto
      * @param   array   $options   additional CURL options to set/override for the request
      * @return  object             Response class instance
      */
-    public function put($url, $data = [], $callback = null, array $options = [])
+    public function put($url, $data = array(), $callback = null, array $options = array())
     {
         return $this->custom('PUT', $url, $data, $callback, $options);
     }
@@ -529,7 +529,7 @@ class Presto
      * @param   array   $options   additional CURL options to set/override for the request
      * @return  object             Response class instance
      */
-    public function delete($url, $data = [], $callback = null, array $options = [])
+    public function delete($url, $data = array(), $callback = null, array $options = array())
     {
         return $this->custom('DELETE', $url, $data, $callback, $options);
     }
@@ -544,7 +544,7 @@ class Presto
      * @param   array   $options   additional CURL options to set/override for the request
      * @return  object             Response class instance
      */
-    public function custom($method, $url, $data = [], $callback = null, array $options = [])
+    public function custom($method, $url, $data = array(), $callback = null, array $options = array())
     {
         $options[CURLOPT_CUSTOMREQUEST] = $method;
 
@@ -609,20 +609,20 @@ class Presto
 
         self::$profiling_count++;
         if (isset($log_data['errorno'])) {
-            self::$profiling[] = [
+            self::$profiling[] = array(
                 'url'       => $log_data['url'],
                 'errorno'   => $log_data['errorno'],
                 'error'     => $log_data['error'],
                 'queue'     => $log_data['queue'],
-            ];
+            );
         } else {
-            self::$profiling[] = [
+            self::$profiling[] = array(
                 'url'               => $log_data['url'],
                 'http_code'         => $log_data['http_code'],
                 'total_time'        => $log_data['total_time'],
                 'pretransfer_time'  => $log_data['pretransfer_time'],
                 'queue'             => $log_data['queue'],
-            ];
+            );
         }
     }
 

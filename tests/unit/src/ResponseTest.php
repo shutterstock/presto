@@ -9,7 +9,7 @@ use Shutterstock\Presto\Response;
 class ResponseTest extends PHPUnit_Framework_TestCase
 {
 
-    private $error_holder = [];
+    private $error_holder = array();
 
     /**
      * run on start of test
@@ -17,7 +17,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        set_error_handler([$this, 'errorHandler']);
+        set_error_handler(array($this, 'errorHandler'));
     }
 
     /**
@@ -40,13 +40,13 @@ class ResponseTest extends PHPUnit_Framework_TestCase
         $line,
         $context
     ) {
-        array_push($this->error_holder, [
+        array_push($this->error_holder, array(
             'errno'       => $number,
             'errstr'      => $string,
             'errfile'     => $file,
             'errline'     => $line,
             'errcontext'  => $context,
-        ]);
+        ));
     }
 
     /**
@@ -133,7 +133,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
             $this->getTestData()
         );
 
-        $this->assertEquals([], $response->header);
+        $this->assertEquals(array(), $response->header);
     }
 
     /**
@@ -213,7 +213,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
         $header = '';
         $header = $response->parseHeader($header);
 
-        $this->assertEquals([], $header);
+        $this->assertEquals(array(), $header);
     }
 
     /**
@@ -221,7 +221,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
      */
     protected function getTestMeta()
     {
-        return [
+        return array(
             'url'                      => 'http://httpbin.org/status/418',
             'content_type'             => NULL,
             'http_code'                => 418,
@@ -244,13 +244,13 @@ class ResponseTest extends PHPUnit_Framework_TestCase
             'redirect_time'            => 0,
             'redirect_url'             => '',
             'primary_ip'               => '127.0.0.1',
-            'certinfo'                 => [],
+            'certinfo'                 => array(),
             'primary_port'             => 80,
             'local_ip'                 => '127.0.0.1',
             'local_port'               => 8000,
             'is_success'               => true,
             'queue'                    => 'off',
-        ];
+        );
     }
 
     /**
