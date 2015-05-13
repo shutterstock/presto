@@ -328,7 +328,7 @@ class Presto
                 usleep($this->retry_delay);
                 return $this->makeRequest($info['url'], $options);
             } else {
-                $this->logError("max retries ({$retries}) reached - ({$info['errorno']}) {$cinfo['error']} :: {$cinfo['url']}");
+                $this->logError("max retries ({$retries}) reached - ({$info['errorno']}) {$info['error']} :: {$info['url']}");
             }
         } else {
             $info['is_success'] = true;
