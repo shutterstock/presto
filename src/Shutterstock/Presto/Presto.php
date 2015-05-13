@@ -319,9 +319,9 @@ class Presto
             ));
             $header = '';
 
+            self::logProfiling($info);
             $retries++;
             if ($retries < $this->retries_max) {
-                self::logProfiling($info);
                 if ($this->log_retries) {
                     $this->logError("retrying request - ({$info['errorno']}) {$info['error']} :: {$info['url']}");
                 }
