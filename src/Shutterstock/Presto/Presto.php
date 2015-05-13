@@ -319,16 +319,16 @@ class Presto
             ));
             $header = '';
 
+            self::logProfiling($info);
             $retries++;
             if ($retries < $this->retries_max) {
-                self::logProfiling($info);
                 if ($this->log_retries) {
                     $this->logError("retrying request - ({$info['errorno']}) {$info['error']} :: {$info['url']}");
                 }
                 usleep($this->retry_delay);
                 return $this->makeRequest($info['url'], $options);
             } else {
-                $this->logError("max retries ({$retries}) reached - ({$info['errorno']}) {$cinfo['error']} :: {$cinfo['url']}");
+                $this->logError("max retries ({$retries}) reached - ({$info['errorno']}) {$info['error']} :: {$info['url']}");
             }
         } else {
             $info['is_success'] = true;
